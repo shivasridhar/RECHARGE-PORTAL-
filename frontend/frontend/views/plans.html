@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recharge Portal - Plans</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed w-full top-0 z-50 bg-black bg-opacity-90 backdrop-blur-sm border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-gradient-to-r from-orange-500 to-purple-500 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold">R</span>
+                </div>
+                <span class="text-xl font-bold">Recharge<span class="gradient-text">Portal</span></span>
+            </div>
+            <div class="flex items-center space-x-8">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="plans.html" class="nav-link">Plans</a>
+                <a href="login.html" class="gradient-btn px-6 py-2 rounded-lg font-semibold">
+                    <span>Login</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PLANS PAGE -->
+    <div class="min-h-screen pt-32 pb-20 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl font-bold mb-4">Choose Your <span class="gradient-text">Perfect Plan</span></h2>
+                <p class="text-gray-400 text-lg">Select from our range of affordable recharge plans</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Basic Plan -->
+                <div class="plan-card p-8 rounded-2xl">
+                    <div class="mb-6">
+                        <span class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Basic</span>
+                        <h3 class="text-4xl font-bold mt-2">₹199</h3>
+                        <p class="text-gray-400 mt-2">Per month</p>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span class="text-gray-300">1.5 GB/day data</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span class="text-gray-300">Unlimited calls</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span class="text-gray-300">100 SMS/day</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span class="text-gray-300">28 days validity</span>
+                        </li>
+                    </ul>
+                    <button class="border-btn w-full px-6 py-3 rounded-lg font-semibold">
+                        Select Plan
+                    </button>
+                </div>
+
+                <!-- Premium Plan -->
+                <div class="plan-card p-8 rounded-2xl relative border-2 border-orange-500">
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                        <span class="badge">Popular</span>
+                    </div>
+                    <div class="mb-6">
+                        <span class="text-sm font-semibold gradient-text uppercase tracking-wide">Premium</span>
+                        <h3 class="text-4xl font-bold mt-2">₹399</h3>
+                        <p class="text-gray-400 mt-2">Per month</p>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span class="text-gray-300">2.5 GB/day data</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span class="text-gray-300">Unlimited calls</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span class="text-gray-300">100 SMS/day</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span class="text-gray-300">56 days validity</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span class="text-gray-300">Free subscription benefits</span>
+                        </li>
+                    </ul>
+                    <button class="gradient-btn w-full px-6 py-3 rounded-lg font-semibold">
+                        <span>Select Plan</span>
+                    </button>
+                </div>
+
+                <!-- Ultimate Plan -->
+                <div class="plan-card p-8 rounded-2xl">
+                    <div class="mb-6">
+                        <span class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Ultimate</span>
+                        <h3 class="text-4xl font-bold mt-2">₹699</h3>
+                        <p class="text-gray-400 mt-2">Per month</p>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span class="text-gray-300">Unlimited data</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span class="text-gray-300">Unlimited calls</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span class="text-gray-300">Unlimited SMS</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span class="text-gray-300">84 days validity</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span class="text-gray-300">Premium subscriptions</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span class="text-gray-300">Priority support</span>
+                        </li>
+                    </ul>
+                    <button class="border-btn w-full px-6 py-3 rounded-lg font-semibold">
+                        Select Plan
+                    </button>
+                </div>
+            </div>
+
+            <div class="mt-16 text-center">
+                <p class="text-gray-400 mb-4">Need a custom plan? Contact our sales team</p>
+                <button class="gradient-btn px-8 py-3 rounded-lg font-semibold">
+                    <span>Contact Sales</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

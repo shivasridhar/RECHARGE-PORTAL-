@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles */
+body {
+  @apply bg-black text-white;
+}
+
+/* Horizontal scroll animation for offers */
+.offer-scroll {
+  animation: offer-marquee 22s linear infinite;
+}
+
+@keyframes offer-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

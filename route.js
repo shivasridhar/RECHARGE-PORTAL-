@@ -3,8 +3,16 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const { User, Plan, Recharge, defaultPlans } = require('./db');
 
+const fs = require('fs');
+
 const router = express.Router();
-const clientEntry = path.join(__dirname, 'public', 'index.html');
+
+// Determine the client entry point (build/index.html for prod, public/index.html for dev)
+const buildEntry = path.join(__dirname, 'build', 'index.html');
+const publicEntry = path.join(__dirname, 'public', 'index.html');
+const clientEntry = fs.existsSync(buildEntry) ? buildEntry : publicEntry;
+
+console.log(`Serving client from: ${clientEntry}`);
 
 // Helper function to hash passwords
 const hashPassword = async (password) => {
@@ -99,9 +107,9 @@ router.post('/api/login', async (req, res) => {
     }
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: error?.message || 'Login failed. Please try again.' 
+    res.status(500).json({
+      success: false,
+      message: error?.message || 'Login failed. Please try again.'
     });
   }
 });

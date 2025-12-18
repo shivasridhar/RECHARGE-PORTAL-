@@ -1,5 +1,0 @@
-Server:  dns.google
-Address:  8.8.8.8
-
-Name:    cluster0-shard-00-00.ovtgk2b.mongodb.net
-

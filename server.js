@@ -41,7 +41,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve static files from React app
+// Serve static files from React build folder
+const buildPath = path.join(__dirname, 'build');
+app.use(express.static(buildPath));
+
+// Also serve public folder as fallback for development assets
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Use the routes
@@ -49,14 +53,18 @@ app.use('/', routes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
+  console.error('SERVER ERROR:', err.stack);
+  res.status(500).json({
+    success: false,
+    message: 'Internal server error',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
 });
 
 // Start the server
-// Use 3000 for backend so the React dev server (3001) can proxy to it
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Backend server is running on port ${PORT}`);
-  console.log(`API endpoints accessible at http://localhost:${PORT}/api`);
+  console.log(`\n🚀 Server running on port ${PORT}`);
+  console.log(`📍 API endpoints: http://localhost:${PORT}/api`);
+  console.log(`📁 Serving static files from: ${buildPath}\n`);
 });

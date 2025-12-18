@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const routes = require('./route');
+const apiRoutes = require('./route');
 const { connectDB, seedPlans } = require('./db');
 const app = express();
 
@@ -45,13 +45,18 @@ app.use((req, res, next) => {
 const buildPath = path.join(__dirname, 'build');
 app.use(express.static(buildPath));
 
-// Also serve public folder as fallback for development assets
+// Serve static assets from public (images, favicon, etc.)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Use the routes
-app.use('/', routes);
+// API routes are all mounted under /api
+app.use('/api', apiRoutes);
 
-// Error handling middleware
+// SPA fallback for any non-API route – MUST be after API + static
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(buildPath, 'index.html'));
+});
+
+// Error handling middleware (API errors)
 app.use((err, req, res, next) => {
   console.error('SERVER ERROR:', err.stack);
   res.status(500).json({

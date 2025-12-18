@@ -3,16 +3,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const { User, Plan, Recharge, defaultPlans } = require('./db');
 
-const fs = require('fs');
-
 const router = express.Router();
-
-// Determine the client entry point (build/index.html for prod, public/index.html for dev)
-const buildEntry = path.join(__dirname, 'build', 'index.html');
-const publicEntry = path.join(__dirname, 'public', 'index.html');
-const clientEntry = fs.existsSync(buildEntry) ? buildEntry : publicEntry;
-
-console.log(`Serving client from: ${clientEntry}`);
 
 // Helper function to hash passwords
 const hashPassword = async (password) => {
@@ -27,8 +18,11 @@ const verifyPassword = async (password, hashedPassword) => {
 
 // ========== API ROUTES ==========
 
+// NOTE: These routes are mounted under /api in server.js
+// So this path '/login' becomes '/api/login' externally, etc.
+
 // POST /api/login - User login/registration
-router.post('/api/login', async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     console.log('POST /api/login - Request body:', JSON.stringify(req.body));
     const { email, password } = req.body;
@@ -115,7 +109,7 @@ router.post('/api/login', async (req, res) => {
 });
 
 // GET /api/plans - Get all active plans
-router.get('/api/plans', async (req, res) => {
+router.get('/plans', async (req, res) => {
   try {
     console.log('GET /api/plans - Fetching plans');
     let plans = [];
@@ -141,7 +135,7 @@ router.get('/api/plans', async (req, res) => {
 });
 
 // POST /api/recharge - Activate a plan for user
-router.post('/api/recharge', async (req, res) => {
+router.post('/recharge', async (req, res) => {
   try {
     const { userId, planId, paymentMethod, paymentDetails } = req.body;
 
@@ -184,7 +178,7 @@ router.post('/api/recharge', async (req, res) => {
 });
 
 // GET /api/my-recharges/:userId - Get user's recharges
-router.get('/api/my-recharges/:userId', async (req, res) => {
+router.get('/my-recharges/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
     const recharges = await Recharge.find({ userId })
@@ -200,7 +194,7 @@ router.get('/api/my-recharges/:userId', async (req, res) => {
 // ========== ADMIN API ROUTES ==========
 
 // GET /api/admin/plans - Get all plans (admin)
-router.get('/api/admin/plans', async (req, res) => {
+router.get('/admin/plans', async (req, res) => {
   try {
     const plans = await Plan.find().sort({ createdAt: -1 });
     res.json({ success: true, plans });
@@ -211,7 +205,7 @@ router.get('/api/admin/plans', async (req, res) => {
 });
 
 // POST /api/admin/plans - Create new plan (admin)
-router.post('/api/admin/plans', async (req, res) => {
+router.post('/admin/plans', async (req, res) => {
   try {
     const { name, price, validity, data, calls, sms, features, popular } = req.body;
 
@@ -240,7 +234,7 @@ router.post('/api/admin/plans', async (req, res) => {
 });
 
 // PUT /api/admin/plans/:id - Update plan (admin)
-router.put('/api/admin/plans/:id', async (req, res) => {
+router.put('/admin/plans/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
@@ -259,7 +253,7 @@ router.put('/api/admin/plans/:id', async (req, res) => {
 });
 
 // DELETE /api/admin/plans/:id - Delete plan (admin)
-router.delete('/api/admin/plans/:id', async (req, res) => {
+router.delete('/admin/plans/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const plan = await Plan.findByIdAndDelete(id);
@@ -272,40 +266,6 @@ router.delete('/api/admin/plans/:id', async (req, res) => {
     console.error('Error deleting plan:', error);
     res.status(500).json({ success: false, message: 'Failed to delete plan' });
   }
-});
-
-// ========== PAGE ROUTES ==========
-
-// Explicit page routes (GET serves client)
-const appRoutes = ['/', '/about', '/plans', '/login', '/admin'];
-
-// GET: serve the SPA entry so URL matches page
-appRoutes.forEach((routePath) => {
-  router.get(routePath, (_req, res) => {
-    res.sendFile(clientEntry);
-  });
-});
-
-// POST actions to change location; intended to be used from nav button form actions
-appRoutes.forEach((routePath) => {
-  router.post(routePath, (_req, res) => {
-    // Redirect with 303 so the browser updates URL and issues a GET
-    res.redirect(303, routePath);
-  });
-});
-
-// Generic navigation endpoint for dynamic actions
-router.post('/navigate', (req, res) => {
-  const target = req.body?.path;
-  if (!target || !appRoutes.includes(target)) {
-    return res.status(400).json({ status: 'error', message: 'Invalid target path' });
-  }
-  return res.redirect(303, target);
-});
-
-// Fallback to client for any other non-API route (supports deep links)
-router.get('*', (_req, res) => {
-  res.sendFile(clientEntry);
 });
 
 module.exports = router;

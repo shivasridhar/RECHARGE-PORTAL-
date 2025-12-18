@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import Navigation from './Navigation';
 
 const Admin = ({ navigateTo }) => {
@@ -32,7 +33,7 @@ const Admin = ({ navigateTo }) => {
   const handleAdd = async (e) => {
     e.preventDefault();
     if (!form.name || !form.price) {
-      alert('Name and price are required');
+      toast.error('Name and price are required');
       return;
     }
 
@@ -49,15 +50,15 @@ const Admin = ({ navigateTo }) => {
 
       const data = await response.json();
       if (data.success) {
-        alert('Plan created successfully');
+        toast.success('Plan created successfully');
         fetchPlans();
         resetForm();
       } else {
-        alert(data.message || 'Failed to create plan');
+        toast.error(data.message || 'Failed to create plan');
       }
     } catch (error) {
       console.error('Error creating plan:', error);
-      alert('Failed to create plan');
+      toast.error('Failed to create plan');
     }
   };
 
@@ -71,16 +72,16 @@ const Admin = ({ navigateTo }) => {
 
       const data = await response.json();
       if (data.success) {
-        alert('Plan updated successfully');
+        toast.success('Plan updated successfully');
         fetchPlans();
         setEditingId(null);
         setEditingData({});
       } else {
-        alert(data.message || 'Failed to update plan');
+        toast.error(data.message || 'Failed to update plan');
       }
     } catch (error) {
       console.error('Error updating plan:', error);
-      alert('Failed to update plan');
+      toast.error('Failed to update plan');
     }
   };
 
@@ -94,14 +95,14 @@ const Admin = ({ navigateTo }) => {
 
       const data = await response.json();
       if (data.success) {
-        alert('Plan deleted successfully');
+        toast.success('Plan deleted successfully');
         fetchPlans();
       } else {
-        alert(data.message || 'Failed to delete plan');
+        toast.error(data.message || 'Failed to delete plan');
       }
     } catch (error) {
       console.error('Error deleting plan:', error);
-      alert('Failed to delete plan');
+      toast.error('Failed to delete plan');
     }
   };
 

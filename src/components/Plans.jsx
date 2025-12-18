@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import Navigation from './Navigation';
 
 const Plans = ({ navigateTo }) => {
@@ -111,13 +112,13 @@ const Plans = ({ navigateTo }) => {
   const handleRecharge = async () => {
     const userStr = localStorage.getItem('user');
     if (!userStr) {
-      alert('Please login first');
+      toast.error('Please login first');
       navigateTo('login');
       return;
     }
 
     if (!selectedPlan) {
-      alert('Please select a plan');
+      toast.error('Please select a plan');
       return;
     }
 
@@ -144,14 +145,14 @@ const Plans = ({ navigateTo }) => {
 
       const data = await response.json();
       if (data.success) {
-        alert('Plan activated successfully!');
+        toast.success('Plan activated successfully!');
         navigateTo('home');
       } else {
-        alert(data.message || 'Failed to activate plan');
+        toast.error(data.message || 'Failed to activate plan');
       }
     } catch (error) {
       console.error('Recharge error:', error);
-      alert('Failed to activate plan. Please try again.');
+      toast.error('Failed to activate plan. Please try again.');
     }
   };
 

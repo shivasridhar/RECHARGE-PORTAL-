@@ -21,7 +21,75 @@ const verifyPassword = async (password, hashedPassword) => {
 // NOTE: These routes are mounted under /api in server.js
 // So this path '/login' becomes '/api/login' externally, etc.
 
-// POST /api/login - User login/registration
+// POST /api/signup - User registration
+router.post('/signup', async (req, res) => {
+  try {
+    console.log('POST /api/signup - Request body:', JSON.stringify(req.body));
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      console.error('Missing email or password');
+      return res.status(400).json({
+        success: false,
+        message: 'Email and password are required'
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 6 characters long'
+      });
+    }
+
+    try {
+      // Check if user already exists
+      console.log('Checking if user exists with email:', email.toLowerCase());
+      const existingUser = await User.findOne({ email: email.toLowerCase() }).lean();
+      
+      if (existingUser) {
+        console.error('User already exists:', email);
+        return res.status(409).json({
+          success: false,
+          message: 'An account with this email already exists'
+        });
+      }
+
+      // Create new user
+      console.log('Creating new account for:', email);
+      const hashedPassword = await hashPassword(password);
+      const user = new User({
+        email: email.toLowerCase(),
+        password: hashedPassword,
+        isAdmin: false
+      });
+      await user.save();
+      console.log('New user created:', user.email);
+      
+      return res.json({
+        success: true,
+        isAdmin: false,
+        message: 'Account created successfully',
+        user: {
+          id: user._id,
+          email: user.email,
+          isAdmin: false
+        }
+      });
+    } catch (dbError) {
+      console.error('Database error during signup:', dbError);
+      throw dbError;
+    }
+  } catch (error) {
+    console.error('Signup error:', error);
+    res.status(500).json({
+      success: false,
+      message: error?.message || 'Sign up failed. Please try again.'
+    });
+  }
+});
+
+// POST /api/login - User login (only for existing users)
 router.post('/login', async (req, res) => {
   try {
     console.log('POST /api/login - Request body:', JSON.stringify(req.body));
@@ -74,25 +142,11 @@ router.post('/login', async (req, res) => {
           }
         });
       } else {
-        // Create new user
-        console.log('User not found, creating new account for:', email);
-        const hashedPassword = await hashPassword(password);
-        user = new User({
-          email: email.toLowerCase(),
-          password: hashedPassword,
-          isAdmin: false
-        });
-        await user.save();
-        console.log('New user created:', user.email);
-        return res.json({
-          success: true,
-          isAdmin: false,
-          message: 'Account created and login successful',
-          user: {
-            id: user._id,
-            email: user.email,
-            isAdmin: false
-          }
+        // User not found - login failed
+        console.error('User not found:', email);
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid email or password'
         });
       }
     } catch (dbError) {

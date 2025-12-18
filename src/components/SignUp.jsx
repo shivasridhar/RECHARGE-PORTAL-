@@ -2,22 +2,35 @@ import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import Navigation from './Navigation';
 
-const Login = ({ navigateTo }) => {
-  const [loginForm, setLoginForm] = useState({ email: '', password: '' });
-  const ADMIN_EMAIL = 'admin@portal.com';
-  const ADMIN_PASS = 'admin123';
+const SignUp = ({ navigateTo }) => {
+  const [signupForm, setSignupForm] = useState({ 
+    email: '', 
+    password: '', 
+    confirmPassword: '' 
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { email, password } = loginForm;
-    if (!email || !password) {
-      toast.error('Please enter email and password');
+    const { email, password, confirmPassword } = signupForm;
+    
+    if (!email || !password || !confirmPassword) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error('Password must be at least 6 characters long');
       return;
     }
 
     try {
-      console.log('Sending login request to /api/login', { email });
-      const response = await fetch('/api/login', {
+      console.log('Sending signup request to /api/signup', { email });
+      const response = await fetch('/api/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -26,40 +39,35 @@ const Login = ({ navigateTo }) => {
         body: JSON.stringify({ email, password }),
       });
 
-      console.log('Login response status:', response.status);
+      console.log('Signup response status:', response.status);
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Login failed. Please try again.');
+        throw new Error(errorData.message || 'Sign up failed. Please try again.');
       }
       
       const data = await response.json();
-      console.log('Login response data:', data);
+      console.log('Signup response data:', data);
 
       if (data.success) {
         // Store user info in localStorage
         localStorage.setItem('user', JSON.stringify(data.user));
         localStorage.setItem('isAdmin', data.isAdmin);
-
-        if (data.isAdmin) {
-          toast.success('Login successful (admin)');
-          navigateTo('admin');
-        } else {
-          toast.success('Login successful');
-          navigateTo('home');
-        }
+        
+        toast.success('Account created successfully!');
+        navigateTo('home');
       } else {
-        toast.error(data.message || 'Login failed');
+        toast.error(data.message || 'Sign up failed');
       }
     } catch (error) {
-      console.error('Login error:', error);
-      toast.error(error.message || 'Login failed. Please try again.');
+      console.error('Signup error:', error);
+      toast.error(error.message || 'Sign up failed. Please try again.');
     }
   };
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Navigation currentPage="login" />
+      <Navigation currentPage="signup" />
 
       <div className="pt-24 flex items-center justify-center">
         <div className="max-w-md w-full mx-4">
@@ -70,8 +78,8 @@ const Login = ({ navigateTo }) => {
                   <span className="text-2xl font-bold">R</span>
                 </div>
               </div>
-              <h2 className="text-3xl font-bold mb-2">Welcome Back</h2>
-              <p className="text-gray-400">Login to continue your recharge</p>
+              <h2 className="text-3xl font-bold mb-2">Create Account</h2>
+              <p className="text-gray-400">Sign up to start your recharge journey</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -80,8 +88,8 @@ const Login = ({ navigateTo }) => {
                 <input 
                   type="text"
                   name="email"
-                  value={loginForm.email}
-                  onChange={(e) => setLoginForm({...loginForm, email: e.target.value})}
+                  value={signupForm.email}
+                  onChange={(e) => setSignupForm({...signupForm, email: e.target.value})}
                   className="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none text-white"
                   placeholder="Enter your email or mobile number"
                 />
@@ -92,40 +100,47 @@ const Login = ({ navigateTo }) => {
                 <input 
                   type="password"
                   name="password"
-                  value={loginForm.password}
-                  onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+                  value={signupForm.password}
+                  onChange={(e) => setSignupForm({...signupForm, password: e.target.value})}
                   className="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none text-white"
-                  placeholder="Enter your password"
+                  placeholder="Enter your password (min. 6 characters)"
                 />
               </div>
 
-              <div className="flex items-center justify-between">
-                <label className="flex items-center space-x-2">
-                  <input type="checkbox" className="w-4 h-4 rounded" />
-                  <span className="text-sm text-gray-400">Remember me</span>
-                </label>
-                <button type="button" className="text-sm text-purple-400 hover:text-purple-300">
-                  Forgot password?
-                </button>
+              <div>
+                <label className="block text-sm font-medium mb-2">Confirm Password</label>
+                <input 
+                  type="password"
+                  name="confirmPassword"
+                  value={signupForm.confirmPassword}
+                  onChange={(e) => setSignupForm({...signupForm, confirmPassword: e.target.value})}
+                  className="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none text-white"
+                  placeholder="Confirm your password"
+                />
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <input type="checkbox" className="w-4 h-4 rounded" />
+                <span className="text-sm text-gray-400">I agree to the Terms & Conditions</span>
               </div>
 
               <button 
                 type="submit"
                 className="w-full py-3 rounded-lg bg-gradient-to-r from-orange-500 via-purple-500 to-blue-500 text-white font-semibold hover:opacity-90 transition"
               >
-                Login
+                Sign Up
               </button>
             </form>
 
             <div className="mt-6 text-center">
               <p className="text-gray-400 text-sm">
-                Don't have an account?{' '}
+                Already have an account?{' '}
                 <button 
                   type="button"
-                  onClick={() => navigateTo('signup')}
+                  onClick={() => navigateTo('login')}
                   className="text-purple-400 hover:text-purple-300 font-semibold"
                 >
-                  Sign up
+                  Login
                 </button>
               </p>
             </div>
@@ -148,4 +163,5 @@ const Login = ({ navigateTo }) => {
   );
 };
 
-export default Login;
+export default SignUp;
+

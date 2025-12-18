@@ -3,6 +3,9 @@ import Navigation from './Navigation';
 
 const Plans = ({ navigateTo }) => {
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [selectedSim, setSelectedSim] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [isPhoneValid, setIsPhoneValid] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('upi');
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,6 +37,28 @@ const Plans = ({ navigateTo }) => {
               sms: '100/day',
               features: ['Free subscription', 'Local & STD calls', 'Roaming'],
               popular: false
+            },
+            {
+              _id: '2',
+              name: 'Popular',
+              price: '₹299',
+              validity: '56 days',
+              data: '2 GB/day',
+              calls: 'Unlimited',
+              sms: 'Unlimited',
+              features: ['Free subscription', 'Local & STD calls', 'Roaming', 'Priority support'],
+              popular: true
+            },
+            {
+              _id: '3',
+              name: 'Premium',
+              price: '₹499',
+              validity: '84 days',
+              data: '3 GB/day',
+              calls: 'Unlimited',
+              sms: 'Unlimited',
+              features: ['Free subscription', 'Local & STD calls', 'Roaming', 'Priority support', 'Extra data rollover'],
+              popular: false
             }
           ]);
         }
@@ -50,6 +75,28 @@ const Plans = ({ navigateTo }) => {
             calls: 'Unlimited',
             sms: '100/day',
             features: ['Free subscription', 'Local & STD calls', 'Roaming'],
+            popular: false
+          },
+          {
+            _id: '2',
+            name: 'Popular',
+            price: '₹299',
+            validity: '56 days',
+            data: '2 GB/day',
+            calls: 'Unlimited',
+            sms: 'Unlimited',
+            features: ['Free subscription', 'Local & STD calls', 'Roaming', 'Priority support'],
+            popular: true
+          },
+          {
+            _id: '3',
+            name: 'Premium',
+            price: '₹499',
+            validity: '84 days',
+            data: '3 GB/day',
+            calls: 'Unlimited',
+            sms: 'Unlimited',
+            features: ['Free subscription', 'Local & STD calls', 'Roaming', 'Priority support', 'Extra data rollover'],
             popular: false
           }
         ]);
@@ -108,6 +155,14 @@ const Plans = ({ navigateTo }) => {
     }
   };
 
+  const handlePhoneChange = (e) => {
+    const value = e.target.value.replace(/\D/g, '');
+    if (value.length <= 10) {
+      setPhoneNumber(value);
+      setIsPhoneValid(value.length === 10);
+    }
+  };
+
   const paymentOptions = [
     { id: 'upi', label: 'UPI (GPay/PhonePe/Paytm)' },
     { id: 'card', label: 'Credit / Debit Card' },
@@ -140,73 +195,126 @@ const Plans = ({ navigateTo }) => {
             <p className="text-gray-400">Loading plans...</p>
           </div>
         ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {plans.map((plan) => (
-            <div 
-              key={plan.id}
-              className={`relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 border-2 transition-transform duration-300 cursor-pointer hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10 ${
-                selectedPlan === plan._id 
-                  ? 'border-purple-500 scale-105' 
-                  : plan.popular 
-                    ? 'border-purple-700' 
-                    : 'border-gray-700 hover:border-gray-600'
-              }`}
-              onClick={() => setSelectedPlan(plan._id)}
-            >
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-gradient-to-r from-orange-500 to-purple-500 px-4 py-1 rounded-full text-sm font-semibold">
-                    Most Popular
-                  </span>
-                </div>
-              )}
-              
-              <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                <div className="text-4xl font-bold mb-2">
-                  {plan.price}
-                  <span className="text-lg text-gray-400">/{plan.validity}</span>
-                </div>
+          <>
+            {/* SIM Selection Section */}
+            <div className="mb-12">
+              <h2 className="text-2xl font-semibold mb-6 text-center text-gray-300">Verify your SIM to view plans</h2>
+              <div className="flex flex-wrap justify-center gap-6">
+                {['Jio', 'Airtel', 'BSNL'].map((sim) => (
+                  <button
+                    key={sim}
+                    onClick={() => setSelectedSim(sim)}
+                    className={`px-8 py-4 rounded-lg font-semibold text-lg border-2 transition-all hover:-translate-y-1 ${selectedSim === sim
+                      ? 'border-orange-500 bg-orange-500/20 text-white shadow-lg shadow-orange-500/20'
+                      : 'border-gray-700 hover:border-orange-500 hover:bg-orange-500/10 text-gray-300'
+                      }`}
+                  >
+                    {sim}
+                  </button>
+                ))}
               </div>
-
-              <div className="space-y-4 mb-8">
-                <div className="flex justify-between border-b border-gray-700 pb-2">
-                  <span className="text-gray-400">Data</span>
-                  <span className="font-semibold">{plan.data}</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-700 pb-2">
-                  <span className="text-gray-400">Calls</span>
-                  <span className="font-semibold">{plan.calls}</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-700 pb-2">
-                  <span className="text-gray-400">SMS</span>
-                  <span className="font-semibold">{plan.sms}</span>
-                </div>
-              </div>
-
-              {plan.features && plan.features.length > 0 && (
-                <div className="space-y-3 mb-8">
-                  {plan.features.map((feature, idx) => (
-                    <div key={idx} className="flex items-center space-x-2">
-                      <span className="text-green-500">✓</span>
-                      <span className="text-sm text-gray-300">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <button 
-                className={`w-full py-3 rounded-lg font-semibold transition ${
-                  selectedPlan === plan._id
-                    ? 'bg-gradient-to-r from-orange-500 via-purple-500 to-blue-500 text-white'
-                    : 'bg-gray-700 text-white hover:bg-gray-600'
-                }`}
-              >
-                {selectedPlan === plan.id ? 'Selected' : 'Select Plan'}
-              </button>
             </div>
-          ))}
-        </div>
+
+            {/* Phone Number Selection Section */}
+            {selectedSim && (
+              <div className="mb-12 max-w-md mx-auto">
+                <h2 className="text-2xl font-semibold mb-6 text-center text-gray-300">Enter Mobile Number</h2>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={phoneNumber}
+                    onChange={handlePhoneChange}
+                    placeholder="Enter 10-digit mobile number"
+                    className="w-full px-6 py-4 rounded-xl bg-gray-900 border border-gray-700 focus:border-orange-500 focus:outline-none text-white text-lg tracking-widest text-center transition-all shadow-lg shadow-purple-500/5 placeholder:tracking-normal placeholder:text-gray-500"
+                    maxLength={10}
+                  />
+                  {isPhoneValid && (
+                    <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-green-500">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {!selectedSim || !isPhoneValid ? (
+              <div className="text-center py-16 bg-gray-900/50 rounded-2xl border border-gray-800 border-dashed">
+                <p className="text-xl text-gray-400">
+                  {!selectedSim
+                    ? '⚠️ Please select your SIM provider above'
+                    : '📱 Please enter a valid 10-digit mobile number to view plans'}
+                </p>
+              </div>
+            ) : (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {plans.map((plan) => (
+                  <div
+                    key={plan.id}
+                    className={`relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 border-2 transition-transform duration-300 cursor-pointer hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10 ${selectedPlan === plan._id
+                      ? 'border-purple-500 scale-105'
+                      : plan.popular
+                        ? 'border-purple-700'
+                        : 'border-gray-700 hover:border-gray-600'
+                      }`}
+                    onClick={() => setSelectedPlan(plan._id)}
+                  >
+                    {plan.popular && (
+                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        <span className="bg-gradient-to-r from-orange-500 to-purple-500 px-4 py-1 rounded-full text-sm font-semibold">
+                          Most Popular
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="text-center mb-6">
+                      <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+                      <div className="text-4xl font-bold mb-2">
+                        {plan.price}
+                        <span className="text-lg text-gray-400">/{plan.validity}</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 mb-8">
+                      <div className="flex justify-between border-b border-gray-700 pb-2">
+                        <span className="text-gray-400">Data</span>
+                        <span className="font-semibold">{plan.data}</span>
+                      </div>
+                      <div className="flex justify-between border-b border-gray-700 pb-2">
+                        <span className="text-gray-400">Calls</span>
+                        <span className="font-semibold">{plan.calls}</span>
+                      </div>
+                      <div className="flex justify-between border-b border-gray-700 pb-2">
+                        <span className="text-gray-400">SMS</span>
+                        <span className="font-semibold">{plan.sms}</span>
+                      </div>
+                    </div>
+
+                    {plan.features && plan.features.length > 0 && (
+                      <div className="space-y-3 mb-8">
+                        {plan.features.map((feature, idx) => (
+                          <div key={idx} className="flex items-center space-x-2">
+                            <span className="text-green-500">✓</span>
+                            <span className="text-sm text-gray-300">{feature}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <button
+                      className={`w-full py-3 rounded-lg font-semibold transition ${selectedPlan === plan._id
+                        ? 'bg-gradient-to-r from-orange-500 via-purple-500 to-blue-500 text-white'
+                        : 'bg-gray-700 text-white hover:bg-gray-600'
+                        }`}
+                    >
+                      {selectedPlan === plan.id ? 'Selected' : 'Select Plan'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
         )}
 
         {selectedPlanData && (
@@ -254,11 +362,10 @@ const Plans = ({ navigateTo }) => {
                   <button
                     key={option.id}
                     onClick={() => setPaymentMethod(option.id)}
-                    className={`w-full text-left px-5 py-4 rounded-xl border transition ${
-                      paymentMethod === option.id
-                        ? 'border-purple-500 bg-purple-500/10 shadow-lg shadow-purple-500/10'
-                        : 'border-gray-700 hover:border-gray-600 bg-gray-800'
-                    }`}
+                    className={`w-full text-left px-5 py-4 rounded-xl border transition ${paymentMethod === option.id
+                      ? 'border-purple-500 bg-purple-500/10 shadow-lg shadow-purple-500/10'
+                      : 'border-gray-700 hover:border-gray-600 bg-gray-800'
+                      }`}
                   >
                     <p className="font-semibold">{option.label}</p>
                     <p className="text-sm text-gray-400 mt-1">Instant confirmation</p>
@@ -272,7 +379,7 @@ const Plans = ({ navigateTo }) => {
                   <input
                     type="text"
                     value={paymentDetails.name}
-                    onChange={(e) => setPaymentDetails({...paymentDetails, name: e.target.value})}
+                    onChange={(e) => setPaymentDetails({ ...paymentDetails, name: e.target.value })}
                     placeholder="Enter name"
                     className="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none text-white"
                   />
@@ -282,7 +389,7 @@ const Plans = ({ navigateTo }) => {
                       <input
                         type="text"
                         value={paymentDetails.card}
-                        onChange={(e) => setPaymentDetails({...paymentDetails, card: e.target.value})}
+                        onChange={(e) => setPaymentDetails({ ...paymentDetails, card: e.target.value })}
                         placeholder="XXXX XXXX XXXX XXXX"
                         className="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none text-white"
                       />
@@ -294,7 +401,7 @@ const Plans = ({ navigateTo }) => {
                       <input
                         type="text"
                         value={paymentDetails.upi}
-                        onChange={(e) => setPaymentDetails({...paymentDetails, upi: e.target.value})}
+                        onChange={(e) => setPaymentDetails({ ...paymentDetails, upi: e.target.value })}
                         placeholder="username@bank"
                         className="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none text-white"
                       />
@@ -324,7 +431,7 @@ const Plans = ({ navigateTo }) => {
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 };
 

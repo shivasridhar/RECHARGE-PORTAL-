@@ -1,7 +1,7 @@
 const path = require('path');
 const express = require('express');
 const bcrypt = require('bcrypt');
-const { User, Plan, Recharge } = require('./db');
+const { User, Plan, Recharge, defaultPlans } = require('./db');
 
 const router = express.Router();
 const clientEntry = path.join(__dirname, 'public', 'index.html');
@@ -24,21 +24,21 @@ router.post('/api/login', async (req, res) => {
   try {
     console.log('POST /api/login - Request body:', JSON.stringify(req.body));
     const { email, password } = req.body;
-    
+
     if (!email || !password) {
       console.error('Missing email or password');
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Email and password are required' 
+      return res.status(400).json({
+        success: false,
+        message: 'Email and password are required'
       });
     }
 
     // Check for admin login
     if (email === 'admin@portal.com' && password === 'admin123') {
       console.log('Admin login successful');
-      return res.json({ 
-        success: true, 
-        isAdmin: true, 
+      return res.json({
+        success: true,
+        isAdmin: true,
         message: 'Admin login successful',
         user: { email: 'admin@portal.com', isAdmin: true }
       });
@@ -55,41 +55,41 @@ router.post('/api/login', async (req, res) => {
         const isValid = await verifyPassword(password, user.password);
         if (!isValid) {
           console.error('Invalid password for user:', email);
-          return res.status(401).json({ 
-            success: false, 
-            message: 'Invalid email or password' 
+          return res.status(401).json({
+            success: false,
+            message: 'Invalid email or password'
           });
         }
         console.log('Login successful for user:', email);
-        return res.json({ 
-          success: true, 
+        return res.json({
+          success: true,
           isAdmin: user.isAdmin || false,
           message: 'Login successful',
-          user: { 
-            id: user._id, 
-            email: user.email, 
-            isAdmin: user.isAdmin || false 
+          user: {
+            id: user._id,
+            email: user.email,
+            isAdmin: user.isAdmin || false
           }
         });
       } else {
         // Create new user
         console.log('User not found, creating new account for:', email);
         const hashedPassword = await hashPassword(password);
-        user = new User({ 
-          email: email.toLowerCase(), 
+        user = new User({
+          email: email.toLowerCase(),
           password: hashedPassword,
           isAdmin: false
         });
         await user.save();
         console.log('New user created:', user.email);
-        return res.json({ 
-          success: true, 
+        return res.json({
+          success: true,
           isAdmin: false,
           message: 'Account created and login successful',
-          user: { 
-            id: user._id, 
-            email: user.email, 
-            isAdmin: false 
+          user: {
+            id: user._id,
+            email: user.email,
+            isAdmin: false
           }
         });
       }
@@ -99,7 +99,10 @@ router.post('/api/login', async (req, res) => {
     }
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ success: false, message: 'Login failed. Please try again.' });
+    res.status(500).json({ 
+      success: false, 
+      message: error?.message || 'Login failed. Please try again.' 
+    });
   }
 });
 
@@ -107,8 +110,21 @@ router.post('/api/login', async (req, res) => {
 router.get('/api/plans', async (req, res) => {
   try {
     console.log('GET /api/plans - Fetching plans');
-    const plans = await Plan.find({ active: true }).sort({ createdAt: -1 });
-    console.log(`Found ${plans.length} plans`);
+    let plans = [];
+    try {
+      if (require('mongoose').connection.readyState === 1) {
+        plans = await Plan.find({ active: true }).sort({ createdAt: -1 });
+      }
+    } catch (dbError) {
+      console.error('Database query error, using fallback plans:', dbError.message);
+    }
+
+    if (!plans || plans.length === 0) {
+      console.log('Using default fallback plans');
+      plans = defaultPlans;
+    }
+
+    console.log(`Returning ${plans.length} plans`);
     res.json({ success: true, plans });
   } catch (error) {
     console.error('Error fetching plans:', error);
@@ -120,7 +136,7 @@ router.get('/api/plans', async (req, res) => {
 router.post('/api/recharge', async (req, res) => {
   try {
     const { userId, planId, paymentMethod, paymentDetails } = req.body;
-    
+
     if (!userId || !planId || !paymentMethod) {
       return res.status(400).json({ success: false, message: 'Missing required fields' });
     }
@@ -148,10 +164,10 @@ router.post('/api/recharge', async (req, res) => {
     });
 
     await recharge.save();
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: 'Plan activated successfully',
-      recharge 
+      recharge
     });
   } catch (error) {
     console.error('Recharge error:', error);
@@ -190,7 +206,7 @@ router.get('/api/admin/plans', async (req, res) => {
 router.post('/api/admin/plans', async (req, res) => {
   try {
     const { name, price, validity, data, calls, sms, features, popular } = req.body;
-    
+
     if (!name || !price || !validity || !data) {
       return res.status(400).json({ success: false, message: 'Missing required fields' });
     }

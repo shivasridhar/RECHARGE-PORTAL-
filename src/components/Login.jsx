@@ -52,7 +52,7 @@ const Login = ({ navigateTo }) => {
       }
     } catch (error) {
       console.error('Login error:', error);
-      alert('Login failed. Please check if the server is running on port 3000.');
+      alert(error.message || 'Login failed. Please try again.');
     }
   };
 

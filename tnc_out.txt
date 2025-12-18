@@ -1,0 +1,20 @@
+
+
+ComputerName   : clus
+                 ter0
+                 -sha
+                 rd-0
+                 0-00
+                 .ovt
+                 gk2b
+                 .mon
+                 godb
+                 .net
+RemoteAddress  : 
+InterfaceAlias : 
+SourceAddress  : 
+PingSucceeded  : Fals
+                 e
+
+
+

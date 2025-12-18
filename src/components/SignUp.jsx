@@ -53,6 +53,8 @@ const SignUp = ({ navigateTo }) => {
         // Store user info in localStorage
         localStorage.setItem('user', JSON.stringify(data.user));
         localStorage.setItem('isAdmin', data.isAdmin);
+        // Dispatch custom event to notify Navigation component
+        window.dispatchEvent(new Event('authChange'));
         
         toast.success('Account created successfully!');
         navigateTo('home');
@@ -67,7 +69,7 @@ const SignUp = ({ navigateTo }) => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Navigation currentPage="signup" />
+      <Navigation currentPage="signup" navigateTo={navigateTo} />
 
       <div className="pt-24 flex items-center justify-center">
         <div className="max-w-md w-full mx-4">

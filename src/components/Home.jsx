@@ -1,10 +1,10 @@
 import React from 'react';
 import Navigation from './Navigation';
 
-const Home = () => {
+const Home = ({ navigateTo }) => {
   return (
     <div className="min-h-screen text-white">
-      <Navigation currentPage="home" />
+      <Navigation currentPage="home" navigateTo={navigateTo} />
 
       {/* Hero Section */}
       <div className="pt-32 pb-20 px-6">

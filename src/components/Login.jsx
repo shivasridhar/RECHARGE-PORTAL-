@@ -40,6 +40,8 @@ const Login = ({ navigateTo }) => {
         // Store user info in localStorage
         localStorage.setItem('user', JSON.stringify(data.user));
         localStorage.setItem('isAdmin', data.isAdmin);
+        // Dispatch custom event to notify Navigation component
+        window.dispatchEvent(new Event('authChange'));
 
         if (data.isAdmin) {
           toast.success('Login successful (admin)');
@@ -59,7 +61,7 @@ const Login = ({ navigateTo }) => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Navigation currentPage="login" />
+      <Navigation currentPage="login" navigateTo={navigateTo} />
 
       <div className="pt-24 flex items-center justify-center">
         <div className="max-w-md w-full mx-4">

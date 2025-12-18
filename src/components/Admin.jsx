@@ -108,7 +108,7 @@ const Admin = ({ navigateTo }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white">
-      <Navigation currentPage="admin" />
+      <Navigation currentPage="admin" navigateTo={navigateTo} />
       <div className="pt-24 pb-12 px-6 max-w-7xl mx-auto">
         <div className="mb-10">
           <h1 className="text-4xl font-bold mb-3">Admin Panel</h1>

@@ -1,10 +1,10 @@
 import React from 'react';
 import Navigation from './Navigation';
 
-const About = () => {
+const About = ({ navigateTo }) => {
   return (
     <div className="min-h-screen bg-black text-white">
-      <Navigation currentPage="about" />
+      <Navigation currentPage="about" navigateTo={navigateTo} />
 
       <div className="pt-28 pb-16 px-6">
         <div className="max-w-7xl mx-auto">
